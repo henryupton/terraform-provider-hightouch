@@ -2,69 +2,33 @@ package main
 
 import (
 	"context"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+	"flag"
+	"log"
 
-	"terraform-provider-hightouch/provider"
-	"terraform-provider-hightouch/hightouch"
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"terraform-provider-hightouch/pkg/provider" // IMPORTANT: Replace with the actual module path for your provider package
 )
 
-// main is the entry point for the provider.
+// The 'version' variable is a placeholder that can be populated by build-time flags.
+var version string = "dev"
+
 func main() {
+	var debug bool
 
+	// The -debug flag allows you to run the provider in a debugger.
+	flag.BoolVar(&debug, "debug", false, "set to true to run the provider with a debugger")
+	flag.Parse()
 
-	plugin.Serve(&plugin.ServeOpts{
-		// ProviderFunc returns the provider's schema and is the only required
-		// field. By putting all our code in the `main` package, we can
-		// reference the `Provider` function directly.
-		ProviderFunc: Provider,
+	// The providerserver.Serve function is the main entrypoint for the provider.
+	// It starts a gRPC server that Terraform Core communicates with.
+	err := providerserver.Serve(context.Background(), provider.New(version), providerserver.ServeOpts{
+		// The 'Address' is a unique identifier for your provider in the local registry.
+		// This should match the path you specify in your .terraformrc file.
+		Address: "local/henryupton/hightouch",
+		Debug:   debug,
 	})
-}
 
-// Provider defines the provider's schema, resources, and configuration.
-func Provider() *schema.Provider {
-	return &schema.Provider{
-		// Schema defines provider-level configuration options, like API keys.
-		Schema: map[string]*schema.Schema{
-			"api_key": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Sensitive:   true,
-				DefaultFunc: schema.EnvDefaultFunc("HIGHTOUCH_API_KEY", nil),
-				Description: "The API key for the Hightouch REST API.",
-			},
-			"api_base_url": {
-			    Type:        schema.TypeString,
-                Optional:    true,
-                Sensitive:   false,
-                DefaultFunc: schema.EnvDefaultFunc("HIGHTOUCH_API_BASE_URL", "https://api.hightouch.com"),
-                Description: "The base URL for the Hightouch API.",
-            },
-		},
-
-		// ResourcesMap maps the resource names in Terraform configurations
-		// to their corresponding schema and CRUD functions.
-		ResourcesMap: map[string]*schema.Resource{
-			"hightouch_source": provider.ResourceHightouchSource(),
-		},
-
-		// DataSourcesMap is for read-only data sources.
-		DataSourcesMap: map[string]*schema.Resource{},
-
-		// ConfigureContextFunc is used to configure the provider, for example,
-		// by setting up an API client.
-		ConfigureContextFunc: providerConfigure,
+	if err != nil {
+		log.Fatal(err.Error())
 	}
-}
-
-// providerConfigure processes the provider configuration and returns a configured API client.
-func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	apiKey := d.Get("api_key").(string)
-	if apiKey == "" {
-		return nil, diag.Errorf("API key is required")
-	}
-
-	client := hightouch.NewClient(apiKey)
-	return client, nil
 }
