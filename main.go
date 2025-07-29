@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
-	"terraform-provider-hightouch/pkg/provider" // IMPORTANT: Replace with the actual module path for your provider package
+	"terraform-provider-hightouch/pkg/provider"
 )
 
 // The 'version' variable is a placeholder that can be populated by build-time flags.
