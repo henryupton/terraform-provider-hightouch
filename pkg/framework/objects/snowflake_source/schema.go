@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
-var datasourceSchema = schema.Schema{
+var SnowflakeSourceResourceSchema = schema.Schema{
 	Description: "Represents a Hightouch Source, which is a connector to a data warehouse, database, or other data platform.",
 	Attributes: map[string]schema.Attribute{
 		"id": schema.Int64Attribute{

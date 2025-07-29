@@ -17,7 +17,9 @@ type hightouchProvider struct {
 	version string
 }
 
-func New(version string) func() provider.Provider {
+func New(
+	version string,
+) func() provider.Provider {
 	return func() provider.Provider {
 		return &hightouchProvider{
 			version: version,
@@ -30,12 +32,20 @@ type hightouchProviderModel struct {
 	APIBaseURL types.String `tfsdk:"api_base_url"`
 }
 
-func (p *hightouchProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
+func (p *hightouchProvider) Metadata(
+	_ context.Context,
+	_ provider.MetadataRequest,
+	resp *provider.MetadataResponse,
+) {
 	resp.TypeName = "hightouch"
 	resp.Version = p.version
 }
 
-func (p *hightouchProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
+func (p *hightouchProvider) Schema(
+	_ context.Context,
+	_ provider.SchemaRequest,
+	resp *provider.SchemaResponse,
+) {
 	resp.Schema = schema.Schema{
 		Description: "Provider for interacting with the Hightouch API.",
 		Attributes: map[string]schema.Attribute{
@@ -53,7 +63,11 @@ func (p *hightouchProvider) Schema(_ context.Context, _ provider.SchemaRequest, 
 	}
 }
 
-func (p *hightouchProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+func (p *hightouchProvider) Configure(
+	ctx context.Context,
+	req provider.ConfigureRequest,
+	resp *provider.ConfigureResponse,
+) {
 	// Retrieve provider data from configuration
 	var config hightouchProviderModel
 	diags := req.Config.Get(ctx, &config)
@@ -96,13 +110,17 @@ func (p *hightouchProvider) Configure(ctx context.Context, req provider.Configur
 	resp.DataSourceData = client
 }
 
-func (p *hightouchProvider) Resources(_ context.Context) []func() resource.Resource {
+func (p *hightouchProvider) Resources(
+	_ context.Context,
+) []func() resource.Resource {
 	return []func() resource.Resource{
 		snowflake_source.NewHightouchSnowflakeSourceResource,
 	}
 }
 
 // DataSources You would also have a DataSources method, which might be empty for now
-func (p *hightouchProvider) DataSources(_ context.Context) []func() datasource.DataSource {
+func (p *hightouchProvider) DataSources(
+	_ context.Context,
+) []func() datasource.DataSource {
 	return []func() datasource.DataSource{}
 }
