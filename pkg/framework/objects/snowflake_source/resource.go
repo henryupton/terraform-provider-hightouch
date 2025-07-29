@@ -10,18 +10,18 @@ import (
 	"terraform-provider-hightouch/pkg/hightouch"
 )
 
-// HightouchSnowflakeSourceResource is the resource implementation.
-type HightouchSnowflakeSourceResource struct {
+// SnowflakeSourceResource is the resource implementation.
+type SnowflakeSourceResource struct {
 	client *hightouch.Client
 }
 
-// NewHightouchSnowflakeSourceResource is a helper function to simplify resource server allocation.
-func NewHightouchSnowflakeSourceResource() resource.Resource {
-	return &HightouchSnowflakeSourceResource{}
+// NewSnowflakeSourceResource is a helper function to simplify resource server allocation.
+func NewSnowflakeSourceResource() resource.Resource {
+	return &SnowflakeSourceResource{}
 }
 
 // Metadata returns the resource type name.
-func (r *HightouchSnowflakeSourceResource) Metadata(
+func (r *SnowflakeSourceResource) Metadata(
 	_ context.Context,
 	req resource.MetadataRequest,
 	resp *resource.MetadataResponse,
@@ -30,7 +30,7 @@ func (r *HightouchSnowflakeSourceResource) Metadata(
 }
 
 // Schema defines the schema for the resource.
-func (r *HightouchSnowflakeSourceResource) Schema(
+func (r *SnowflakeSourceResource) Schema(
 	_ context.Context,
 	_ resource.SchemaRequest,
 	resp *resource.SchemaResponse,
@@ -39,7 +39,7 @@ func (r *HightouchSnowflakeSourceResource) Schema(
 }
 
 // Configure adds the hightouch_resources configured client to the resource.
-func (r *HightouchSnowflakeSourceResource) Configure(
+func (r *SnowflakeSourceResource) Configure(
 	_ context.Context,
 	req resource.ConfigureRequest,
 	resp *resource.ConfigureResponse,
@@ -59,13 +59,13 @@ func (r *HightouchSnowflakeSourceResource) Configure(
 }
 
 // Create creates the resource and sets the initial state.
-func (r *HightouchSnowflakeSourceResource) Create(
+func (r *SnowflakeSourceResource) Create(
 	ctx context.Context,
 	req resource.CreateRequest,
 	resp *resource.CreateResponse,
 ) {
 	// Retrieve values from plan
-	var plan HightouchSnowflakeSourceResourceModel
+	var plan SnowflakeSourceResourceModel
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -109,12 +109,12 @@ func (r *HightouchSnowflakeSourceResource) Create(
 }
 
 // Read refreshes the resource state with the latest data.
-func (r *HightouchSnowflakeSourceResource) Read(
+func (r *SnowflakeSourceResource) Read(
 	ctx context.Context,
 	req resource.ReadRequest,
 	resp *resource.ReadResponse,
 ) {
-	var state HightouchSnowflakeSourceResourceModel
+	var state SnowflakeSourceResourceModel
 	diags := req.State.Get(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -127,7 +127,7 @@ func (r *HightouchSnowflakeSourceResource) Read(
 		resp.Diagnostics.AddError("Invalid Source ID", "The source ID must be set before reading. Please ensure the resource has been created successfully before attempting to read it.")
 		return
 	}
-	source, err := r.client.GetHightouchSnowflakeSource(sourceID)
+	source, err := r.client.GetSnowflakeSource(sourceID)
 	if err != nil {
 		resp.Diagnostics.AddError("Error reading source", "Could not read source, unexpected error: "+err.Error())
 		return
@@ -198,12 +198,12 @@ func (r *HightouchSnowflakeSourceResource) Read(
 }
 
 // Update updates the resource and sets the updated state.
-func (r *HightouchSnowflakeSourceResource) Update(
+func (r *SnowflakeSourceResource) Update(
 	ctx context.Context,
 	req resource.UpdateRequest,
 	resp *resource.UpdateResponse,
 ) {
-	var plan, state HightouchSnowflakeSourceResourceModel
+	var plan, state SnowflakeSourceResourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
@@ -250,12 +250,12 @@ func (r *HightouchSnowflakeSourceResource) Update(
 }
 
 // Delete deletes the resource from the remote API.
-func (r *HightouchSnowflakeSourceResource) Delete(
+func (r *SnowflakeSourceResource) Delete(
 	ctx context.Context,
 	req resource.DeleteRequest,
 	resp *resource.DeleteResponse,
 ) {
-	var state HightouchSnowflakeSourceResourceModel
+	var state SnowflakeSourceResourceModel
 	diags := req.State.Get(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -276,7 +276,7 @@ func (r *HightouchSnowflakeSourceResource) Delete(
 }
 
 // ImportState imports the resource into Terraform state.
-func (r *HightouchSnowflakeSourceResource) ImportState(
+func (r *SnowflakeSourceResource) ImportState(
 	ctx context.Context,
 	req resource.ImportStateRequest,
 	resp *resource.ImportStateResponse,

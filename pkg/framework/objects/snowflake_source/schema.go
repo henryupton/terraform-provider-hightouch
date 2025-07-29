@@ -1,6 +1,7 @@
 package snowflake_source
 
 import (
+	datasourceschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
@@ -66,6 +67,65 @@ var SnowflakeSourceResourceSchema = schema.Schema{
 			},
 		},
 		"updated_at": schema.StringAttribute{
+			Description: "The timestamp when the source was last updated.",
+			Computed:    true,
+		},
+	},
+}
+
+var SnowflakeSourceDataSourceSchema = datasourceschema.Schema{
+	Description: "Fetches information about a Hightouch Snowflake Source.",
+	Attributes: map[string]datasourceschema.Attribute{
+		"id": datasourceschema.Int64Attribute{
+			Description: "The ID of the source.",
+			Required:    true,
+		},
+		"name": datasourceschema.StringAttribute{
+			Description: "The name of the source.",
+			Computed:    true,
+		},
+		"slug": datasourceschema.StringAttribute{
+			Description: "The slug of the source.",
+			Computed:    true,
+		},
+		"type": datasourceschema.StringAttribute{
+			Description: "The type of the source.",
+			Computed:    true,
+		},
+		"account": datasourceschema.StringAttribute{
+			Description: "Source account.",
+			Computed:    true,
+		},
+		"port": datasourceschema.Int64Attribute{
+			Description: "Source port.",
+			Computed:    true,
+		},
+		"username": datasourceschema.StringAttribute{
+			Description: "Username.",
+			Computed:    true,
+		},
+		"password": datasourceschema.StringAttribute{
+			Description: "Password.",
+			Computed:    true,
+			Sensitive:   true,
+		},
+		"database": datasourceschema.StringAttribute{
+			Description: "Database name.",
+			Computed:    true,
+		},
+		"warehouse": datasourceschema.StringAttribute{
+			Description: "Warehouse name.",
+			Computed:    true,
+		},
+		"workspace_id": datasourceschema.Int64Attribute{
+			Description: "The ID of the workspace that the source belongs to.",
+			Computed:    true,
+		},
+		"created_at": datasourceschema.StringAttribute{
+			Description: "The timestamp when the source was created.",
+			Computed:    true,
+		},
+		"updated_at": datasourceschema.StringAttribute{
 			Description: "The timestamp when the source was last updated.",
 			Computed:    true,
 		},

@@ -2,13 +2,18 @@ package provider
 
 import (
 	"context"
+
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
 	"os"
-	"terraform-provider-hightouch/pkg/framework/objects/snowflake_source"
+
+	iterabledestination "terraform-provider-hightouch/pkg/framework/objects/iterable_destination"
+	snowflakesource "terraform-provider-hightouch/pkg/framework/objects/snowflake_source"
+
 	"terraform-provider-hightouch/pkg/hightouch"
 )
 
@@ -77,8 +82,6 @@ func (p *hightouchProvider) Configure(
 	}
 
 	apiKey := ""
-	// If the API key is unknown, we can't configure the client.
-	// This can happen during planning if the key is from a dynamic source.
 	if config.APIKey.ValueString() != "" {
 		apiKey = config.APIKey.ValueString()
 	} else if os.Getenv("HIGHTOUCH_API_KEY") != "" {
@@ -92,7 +95,6 @@ func (p *hightouchProvider) Configure(
 	}
 
 	apiBaseUrl := ""
-	// Get API base URL from config or use default
 	if config.APIBaseURL.ValueString() != "" {
 		apiBaseUrl = config.APIBaseURL.ValueString()
 	} else if os.Getenv("HIGHTOUCH_API_BASE_URL") != "" {
@@ -102,10 +104,8 @@ func (p *hightouchProvider) Configure(
 	}
 
 	// Create a new client and make it available to all resources
-	client := hightouch.NewClient(apiKey, apiBaseUrl) // Assuming NewClient is in this package or imported
+	client := hightouch.NewClient(apiKey, apiBaseUrl)
 
-	// This is the crucial step: we pass the configured client
-	// to all resources and data sources.
 	resp.ResourceData = client
 	resp.DataSourceData = client
 }
@@ -114,13 +114,16 @@ func (p *hightouchProvider) Resources(
 	_ context.Context,
 ) []func() resource.Resource {
 	return []func() resource.Resource{
-		snowflake_source.NewHightouchSnowflakeSourceResource,
+		iterabledestination.NewIterableDestinationResource,
+		snowflakesource.NewSnowflakeSourceResource,
 	}
 }
 
-// DataSources You would also have a DataSources method, which might be empty for now
 func (p *hightouchProvider) DataSources(
 	_ context.Context,
 ) []func() datasource.DataSource {
-	return []func() datasource.DataSource{}
+	return []func() datasource.DataSource{
+		iterabledestination.NewIterableDestinationDataSource,
+		snowflakesource.NewSnowflakeSourceDataSource,
+	}
 }

@@ -4,8 +4,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// HightouchSnowflakeSourceResourceModel maps the resource schema data for a Snowflake source in Hightouch.
-type HightouchSnowflakeSourceResourceModel struct {
+// SnowflakeSourceResourceModel maps the resource schema data for a Snowflake source in Hightouch.
+type SnowflakeSourceResourceModel struct {
 	ID          types.Int64  `tfsdk:"id"`
 	Name        types.String `tfsdk:"name"`
 	Slug        types.String `tfsdk:"slug"`

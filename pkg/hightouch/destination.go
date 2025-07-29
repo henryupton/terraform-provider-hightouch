@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type HightouchSource struct {
+type HightouchDestination struct {
 	ID            *int                   `json:"id"`
 	Name          string                 `json:"name"`
 	Slug          string                 `json:"slug"`
@@ -14,38 +14,40 @@ type HightouchSource struct {
 	CreatedAt     time.Time              `json:"createdAt"`
 	UpdatedAt     time.Time              `json:"updatedAt"`
 	Type          string                 `json:"type"`
+	Syncs         []int                  `json:"syncs"`
 	Configuration map[string]interface{} `json:"configuration"`
 }
 
-// GetSnowflakeSource GetHightouchSource retrieves a specific source by its ID.
-func (c *Client) GetSnowflakeSource(
-	sourceID int,
-) (*HightouchSource, error) {
+// GetHightouchDestination retrieves a specific destination by its ID.
+func (c *Client) GetHightouchDestination(
+	destinationID int,
+) (*HightouchDestination, error) {
 
-	var source HightouchSource
+	var destination HightouchDestination
 
 	respBody, err := c.makeRequest(
 		"GET",
-		fmt.Sprintf("/sources/%d", sourceID),
+		fmt.Sprintf("/destinations/%d", destinationID),
 		nil,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := json.Unmarshal(respBody, &source); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal GetHightouchSource response: %w", err)
+	if err := json.Unmarshal(respBody, &destination); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal GetHightouchDestination response: %w", err)
 	}
 
-	return &source, nil
+	return &destination, nil
 }
 
-func (c *Client) CreateHightouchSource(
+// CreateHightouchDestination creates a new destination in Hightouch.
+func (c *Client) CreateHightouchDestination(
 	name string,
 	slug string,
-	sourceType string,
+	destinationType string,
 	configuration map[string]interface{},
-) (*HightouchSource, error) {
+) (*HightouchDestination, error) {
 	requestBody := struct {
 		Name          string                 `json:"name"`
 		Slug          string                 `json:"slug"`
@@ -54,14 +56,14 @@ func (c *Client) CreateHightouchSource(
 	}{
 		Name:          name,
 		Slug:          slug,
-		Type:          sourceType,
+		Type:          destinationType,
 		Configuration: configuration,
 	}
 
-	var source HightouchSource
+	var destination HightouchDestination
 	respBody, err := c.makeRequest(
 		"POST",
-		"/sources",
+		"/destinations",
 		requestBody,
 	)
 
@@ -69,20 +71,20 @@ func (c *Client) CreateHightouchSource(
 		return nil, err
 	}
 
-	if err := json.Unmarshal(respBody, &source); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal CreateHightouchSource response: %w", err)
+	if err := json.Unmarshal(respBody, &destination); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal CreateHightouchDestination response: %w", err)
 	}
 
-	return &source, nil
+	return &destination, nil
 }
 
-// UpdateHightouchSource updates a specific source.
-// The `updates` map can contain any of the mutable source fields, e.g., "name", "configuration".
-func (c *Client) UpdateHightouchSource(
-	sourceID int,
+// UpdateHightouchDestination updates a specific destination.
+// The name and configuration parameters can be updated.
+func (c *Client) UpdateHightouchDestination(
+	destinationID int,
 	name string,
 	configuration map[string]interface{},
-) (*HightouchSource, error) {
+) (*HightouchDestination, error) {
 	requestBody := struct {
 		Name          string                 `json:"name"`
 		Configuration map[string]interface{} `json:"configuration"`
@@ -91,10 +93,10 @@ func (c *Client) UpdateHightouchSource(
 		Configuration: configuration,
 	}
 
-	var source HightouchSource
+	var destination HightouchDestination
 	respBody, err := c.makeRequest(
 		"PATCH",
-		fmt.Sprintf("/sources/%d", sourceID),
+		fmt.Sprintf("/destinations/%d", destinationID),
 		requestBody,
 	)
 
@@ -102,9 +104,9 @@ func (c *Client) UpdateHightouchSource(
 		return nil, err
 	}
 
-	if err := json.Unmarshal(respBody, &source); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal UpdateHightouchSource response: %w", err)
+	if err := json.Unmarshal(respBody, &destination); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal UpdateHightouchDestination response: %w", err)
 	}
 
-	return &source, nil
+	return &destination, nil
 }
