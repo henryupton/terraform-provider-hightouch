@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -9,12 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	"os"
+	"terraform-provider-hightouch/pkg/hightouch"
+
+	"terraform-provider-hightouch/pkg/framework/objects/model"
+	"terraform-provider-hightouch/pkg/framework/objects/sync"
 
 	iterabledestination "terraform-provider-hightouch/pkg/framework/objects/iterable_destination"
 	snowflakesource "terraform-provider-hightouch/pkg/framework/objects/snowflake_source"
-
-	"terraform-provider-hightouch/pkg/hightouch"
 )
 
 type hightouchProvider struct {
@@ -115,7 +117,9 @@ func (p *hightouchProvider) Resources(
 ) []func() resource.Resource {
 	return []func() resource.Resource{
 		iterabledestination.NewIterableDestinationResource,
+		model.NewModelResource,
 		snowflakesource.NewSnowflakeSourceResource,
+		sync.NewSyncResource,
 	}
 }
 
@@ -124,6 +128,8 @@ func (p *hightouchProvider) DataSources(
 ) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		iterabledestination.NewIterableDestinationDataSource,
+		model.NewModelDataSource,
 		snowflakesource.NewSnowflakeSourceDataSource,
+		sync.NewSyncDataSource,
 	}
 }
